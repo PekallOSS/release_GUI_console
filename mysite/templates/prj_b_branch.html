@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+</head>
+<body>
+<div class="col-xs-12 col-md-4" align="left">
+    <label>prjb:<br>
+        <select id="child_combobox" data-toggle="select"
+                class="form-control select select-primary mrs mbm">
+            <option value="master">master</option>
+        </select></label>
+</div>
+<div class="col-xs-12 col-md-4">
+    <label>utility:<br>
+        <select id="utility_combobox" data-toggle="select"
+                class="form-control select select-primary mrs mbm">
+            <option value="master">master</option>
+        </select>
+    </label>
+</div>
+
+</body>
+<script src="../static/bootstrap/js/application.js"></script>
+<script src="../static/bootstrap/js/branch.js"></script>
+<script type="application/javascript">
+    //取分支
+    get_module_branch($("#child_combobox"), "prjb");
+    //取分支
+    get_module_branch($("#utility_combobox"), "utility");
+    //设置默认值
+    $("#child_combobox").val("master");
+    $("#utility_combobox").val("master");
+</script>
+</html>

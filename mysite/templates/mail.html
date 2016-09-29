@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <link href="../static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="../static/bootstrap/skins/all.css" rel="stylesheet">
+    <link href="../static/bootstrap/css/flat-ui.min.css" rel="stylesheet">
+    <link href="../static/bootstrap/css/select2.min.css" rel="stylesheet"/>
+    <link href="../static/bootstrap/css/messenger-theme-future.css" rel="stylesheet"/>
+    <link href="../static/bootstrap/css/messenger.css" rel="stylesheet"/>
+
+    <title>可视化发布工具</title>
+</head>
+<body id="body_main">
+<div class="container-fluid" style="margin-top: 3%">
+    <div class="row">
+        <div class="col-md-2 col-sm-0"></div>
+
+        <div class="col-md-8 col-sm-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        邮件
+                    </h3>
+                </div>
+
+                <div class="panel-body">
+                    <div class="input-group">
+                        <button type="button" id="btn_send" class="btn btn-primary btn-sm">发送</button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button type="button" id="btn_close" class="btn btn-primary btn-sm" hidden="hidden">关闭</button>
+                    </div>
+                    <p></p>
+
+                    {#                    <div class="input-group">#}
+                    {#                        <span class="input-group-addon">收件人：</span>#}
+                    {#                        <input id="to_address"#}
+                    {#                               class="form-control" type="text"#}
+                    {#                               placeholder="请填写收件人邮箱"/>#}
+                    {#                    </div>#}
+                    <p></p>
+
+                    <div class="input-group">
+                        <span class="input-group-addon">收件人</span>
+                        <select id="to_address" data-toggle="select"
+                                class="form-control select select-primary mrs mbm">
+                            <option value="ebag@pekall.com">电子书包组</option>
+                            <option value="pcp@pekall.com">成长守护</option>
+                        </select>
+                    </div>
+                    <p></p>
+
+                    <div class="input-group">
+                        <span class="input-group-addon">主题&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <input id="subject"
+                               class="form-control" type="text"
+                               value="电子书包"
+                               placeholder="请填写主题"/>
+                    </div>
+                    <p></p>
+
+                    <div class="input-group">
+                        {% comment %}<span class="input-group-addon">发件人邮箱：</span>
+                        <input id="from_addressee"
+                               class="form-control" type="text"
+                               placeholder=""/>{% endcomment %}
+                        <span class="input-group-addon">密码&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <input id="from_pwd"
+                               class="form-control" type="password"
+                               placeholder=""/>
+                    </div>
+                    <p></p>
+
+                    <div class="input-group">
+                        <span class="input-group-addon">正文&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <textarea name="textarea" id="mail_body" rows="20" class="form-control"
+                                  placeholder="请填写正文">
+                        </textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-0"></div>
+    </div>
+</div>
+
+</body>
+<script src="../static/bootstrap/js/jquery.min.js"></script>
+<script src="../static/bootstrap/js/jquery.cookie.js"></script>
+<script src="../static/bootstrap/js/jquery.json.js"></script>
+<script src="../static/bootstrap/js/bootstrap-switch.min.js"></script>
+<script src="../static/bootstrap/js/icheck.min.js"></script>
+<script src="../static/bootstrap/js/flat-ui.min.js"></script>
+<script src="../static/bootstrap/js/application.js"></script>
+<script src="../static/bootstrap/js/messenger-theme-future.js"></script>
+<script src="../static/bootstrap/js/messenger.min.js"></script>
+<script src="../static/bootstrap/js/cumjs.js"></script>
+<script type="application/javascript">
+    function check() {
+        var result = true;
+        if ($("#subject").val().trim() == "") {
+            result = false
+            $._messengerDefaults = {extraClasses: 'messenger-fixed messenger-theme-ice messenger-on-top'}
+            $.globalMessenger().post({message: "邮件主题需填写!", hideAfter: 2, hideOnNavigate: true});
+        }
+        if ($("#mail_body").val().trim() == "") {
+            result = false
+            $._messengerDefaults = {extraClasses: 'messenger-fixed messenger-theme-ice messenger-on-top'}
+            $.globalMessenger().post({message: "邮件内容需填写!", hideAfter: 2, hideOnNavigate: true});
+        }
+        if ($("#from_pwd").val().trim() == "") {
+            result = false
+            $._messengerDefaults = {extraClasses: 'messenger-fixed messenger-theme-ice messenger-on-top'}
+            $.globalMessenger().post({message: "密码需填写!", hideAfter: 2, hideOnNavigate: true});
+        }
+        return result;
+    }
+    $(document).ready(function () {
+        csrf();
+
+        {#        var prj = $("#to_address");#}
+        {#        //prj.empty();#}
+        {#        prj.append("<option  value='ebag@pekall.com'>电子书包组</option>");#}
+        {#        prj.append("<option  value='pcp@pekall.com'>成长守护组</option>");#}
+
+        $("#btn_send").click(function () {
+            if (check()) {
+                $("#btn_send").prop("disabled", true);
+                $.ajax({
+                    url: '/send_mail',
+                    data: {
+                        'to_address': $("#to_address").val(),
+                        'subject': $("#subject").val(),
+                        'from_pwd': $("#from_pwd").val(),
+                        'body': $("#mail_body").val()
+                    },
+                    type: 'POST',
+                    context: document.body,
+                    success: function (data, textStatus) {
+                        $._messengerDefaults = {extraClasses: 'messenger-fixed messenger-theme-ice messenger-on-top'}
+                        if (data.result == "ok") {
+                            //弹出框
+                            $.globalMessenger().post({message: "邮件发送成功!", hideAfter: 2, hideOnNavigate: true});
+                        } else {
+                            $.globalMessenger().post({
+                                message: "邮件发送失败!" + data.info,
+                                hideAfter: 2,
+                                hideOnNavigate: true
+                            });
+
+                        }
+                        $("#btn_send").prop("disabled", false);
+                    },
+                    error: function (xMLHttpRequest, textStatus, errorThrown) {
+                        var msg = xMLHttpRequest.status + "," + xMLHttpRequest.readyState + "," + textStatus + "," + errorThrown;
+                        $.globalMessenger().post({message: msg, hideAfter: 10, hideOnNavigate: true});
+                        $("#btn_send").prop("disabled", false);
+                    }
+                });
+            }
+        });
+
+        $("#btn_close").click(function () {
+            window.close();
+        });
+        read_config();
+    });
+
+    function read_config() {
+        $.ajax({
+            url: '/read_mail_config',
+            data: {'action': 'read_mail_config'},
+            type: 'POST',
+            context: document.body,
+            success: function (data, textStatus) {
+                $("#subject").val(data['subject']);
+                $("#to_address").val(data['to']);
+                $("#mail_body").val(data['mail_body']);
+                if (data['to'].indexOf('pcp') > -1) {
+                    $("#select2-chosen-1").text('成长守护');
+                } else if (data['to'].indexOf('ebag') > -1) {
+                    $("#select2-chosen-1").text('电子书包组');
+                }
+            },
+            error: function (xMLHttpRequest, textStatus, errorThrown) {
+                var msg = xMLHttpRequest.status + "," + xMLHttpRequest.readyState + "," + textStatus + "," + errorThrown;
+                $.globalMessenger().post({message: msg, hideAfter: 10, hideOnNavigate: true});
+            }
+        });
+    }
+
+    /**
+     * 读取父窗口元素
+     */
+    function read_parent_content() {
+        //var prj = window.opener.document.getElementById("select_prj").value;
+        //prj = $("#select_prj", window.opener.document).val();
+
+    }
+</script>
+
+</html>

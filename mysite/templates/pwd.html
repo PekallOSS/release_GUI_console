@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+    <link href="../static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../static/bootstrap/css/style.css" rel="stylesheet">
+    <title>可视化发布工具</title>
+</head>
+
+<body>
+<div class="container-fluid" align="center" style="margin-top: 10%">
+    <div class="row">
+        <div class="col-xs-12 col-md-4">
+        </div>
+        <div class="col-xs-12 col-md-4">
+            <div class="login">
+                <div class="login-screen">
+
+                    <div class="title">
+                        <label style="font-size: 24px">登录密码修改</label>
+                    </div>
+
+                    <p>　　</p>
+
+                    <div class="login-form">
+                        <div class="form-group">
+                            <input type="text" class="form-control login-field" value="" placeholder="输入旧密码"
+                                   id="pwd_old"/>
+                            <label class="login-field-icon fui-user" for="login-name"></label>
+                            <label id="msg1" style="color: #D35400"></label>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="password" class="form-control login-field" value="" placeholder="输入新密码"
+                                   id="pwd_new"/>
+                            <label class="login-field-icon fui-lock" for="login-pass"></label>
+                            <label id="msg2" style="color: #D35400"></label>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="password" class="form-control login-field" value="" placeholder="密码确认"
+                                   id="pwd_confirm"/>
+                            <label class="login-field-icon fui-lock" for="login-pass"></label>
+                            <label id="msg3" style="color: #D35400"></label>
+
+                            {#                        <a class="btn btn-lg" href="#" id="btn_submit"><label#}
+                            {#                                style="color: #ffffff">保存</label></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#}
+                            {#                        <a class="btn btn-lg" href="#" id="btn_cancel"><label#}
+                            {#                                style="color: #ffffff">关闭</label></a>#}
+                            <div class="input-group">
+                                <button type="button" id="btn_submit" class="btn btn-primary btn-md">保存</button>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <button type="button" id="btn_cancel" class="btn btn-primary btn-md" hidden="hidden">关闭
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+</body>
+
+<script src="../static/bootstrap/js/jquery.min.js"></script>
+<script src="../static/bootstrap/js/jquery.cookie.js"></script>
+<script src="../static/bootstrap/js/bootstrap-switch.min.js"></script>
+<script src="../static/bootstrap/js/messenger-theme-future.js"></script>
+<script src="../static/bootstrap/js/messenger.min.js"></script>
+<script src="../static/bootstrap/js/cumjs.js"></script>
+<script type="application/javascript">
+    $(document).ready(function () {
+        //跨站请求伪造初始化
+        csrf();
+        updatePwd();
+        cancel();
+    });
+
+
+    /**
+     * 修改密码
+     */
+    function updatePwd() {
+        $("#btn_submit").click(function () {
+            if (!checkPwd()) {
+                return;
+            }
+            $.ajax({
+                url: '/update_pwd',
+                data: {
+                    pwd_old: $("#pwd_old").val(),
+                    pwd_new: $("#pwd_new").val(),
+                    pwd_confirm: $("#pwd_confirm").val(),
+                    action: 'update_pwd'
+                },
+                type: 'POST',
+                context: document.body,
+                success: function (data, textStatus) {
+                    if (data.info == "error") {
+                        $("#msg1").text("密码不正确!");
+                    }
+                    else {
+                        $._messengerDefaults = {extraClasses: 'messenger-fixed messenger-theme-ice messenger-on-top'}
+                        $.globalMessenger().post({message: "密码设置设置成功!", hideAfter: 2, hideOnNavigate: true});
+                        location.href = "deploy.html";
+                    }
+                },
+                error: function (xMLHttpRequest, textStatus, errorThrown) {
+                    alert(xMLHttpRequest.status + "," + xMLHttpRequest.readyState + "," + textStatus + "," + errorThrown);
+                }
+            });
+        });
+    }
+
+    /**
+     * 回到主界面
+     */
+    function cancel() {
+        $("#btn_cancel").click(function () {
+            location.href = "deploy.html";
+        });
+    }
+
+    function checkPwd() {
+        var result = true;
+        if ($("#pwd_old").val().trim() == "") {
+            $("#msg1").text("密码不能为空!");
+            result = false;
+        } else {
+            $("#msg1").text("");
+        }
+
+        if ($("#pwd_new").val().trim() == "") {
+            $("#msg2").text("新密码不能为空!");
+            result = false;
+        }
+        else {
+            if ($("#pwd_new").val().trim() != $("#pwd_confirm").val().trim()) {
+                $("#msg2").text("密码不一致!");
+                $("#msg3").text("密码不一致!");
+                result = false;
+            } else {
+                $("#msg2").text("");
+                $("#msg3").text("");
+            }
+        }
+        return result;
+    }
+</script>
+
+</html>
