@@ -1,6 +1,6 @@
 #Android 可视化打包发布工具（界面端）
-![Shurnim icon](http://github.com/PekallOSS/release_GUI_console/raw/master/img/login.png)
- <a name="背景介绍"></a>
+![image](https://github.com/PekallOSS/release_GUI_console/raw/master/img/login.png)
+<a name="背景介绍"></a>
 ## 背景介绍
 随着手机App迅速普及，发布工作使用频繁，产品发布者对App的发布工作也逐渐重视。针对手工发布导致的人工错误，工作效率得不到提高，Android可视化打包发布工具通过技术手段有效的解放用户繁杂重复的发布流程，让工作变得轻松自如，做到一键发布。
 
@@ -23,12 +23,12 @@ python /home/yanghai/work/openSource/mysite/manage.py runserver 0.0.0.0:8000,
 
 <a name="参数配置"></a>
 ### 参数配置
-1.选择项目
-2.选择环境
-3.选择分支
-4.勾选编译
-5.选择上传渠道
-6.点击发布
+1.选择项目<br>
+2.选择环境<br>
+3.选择分支<br>
+4.勾选编译<br>
+5.选择上传渠道<br>
+6.点击发布<br>
 <a name="主界面"></a>
 ### 主界面
-![Shurnim icon](http://github.com/PekallOSS/release_GUI_console/raw/master/img/main1.png)
+![Shurnim icon](https://github.com/PekallOSS/release_GUI_console/raw/master/img/main1.png)
